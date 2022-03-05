@@ -1,0 +1,7 @@
+{
+  "name": "tickk",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
