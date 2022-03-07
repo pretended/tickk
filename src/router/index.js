@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import TabsPage from '../views/TabsPage.vue'
+import CameraPage from "@/views/CameraPage";
 
 const routes = [
   {
@@ -27,7 +28,11 @@ const routes = [
         component: () => import('@/views/SettingsPage.vue')
       }
     ]
-  }
+  },
+
+  {
+    path: '/camera',
+    component: CameraPage  }
 ]
 
 const router = createRouter({

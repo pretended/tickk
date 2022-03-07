@@ -8,11 +8,19 @@
           <ion-label>Friends</ion-label>
         </ion-tab-button>
 
+
         <ion-tab-button tab="tab2" href="/tabs/tab2">
           <ion-icon :icon="peopleCircleOutline" />
           <ion-label>Groups</ion-label>
         </ion-tab-button>
-
+        <ion-tab-button tab="camera" href="/camera">
+          <ion-icon :icon="cameraOutline" />
+          <ion-label>Camera</ion-label>
+        </ion-tab-button>
+        <ion-tab-button tab="aa">
+          <ion-icon :icon="cogOutline" />
+          <ion-label>tickk</ion-label>
+        </ion-tab-button>
         <ion-tab-button tab="tab3" href="/tabs/tab3">
           <ion-icon :icon="cogOutline" />
           <ion-label>Settings</ion-label>
@@ -25,7 +33,7 @@
 <script >
 import { defineComponent } from 'vue';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { personCircleOutline, peopleCircleOutline, cogOutline } from 'ionicons/icons';
+import { personCircleOutline, peopleCircleOutline, cogOutline, cameraOutline } from 'ionicons/icons';
 
 export default defineComponent({
   name: 'TabsPage',
@@ -34,7 +42,8 @@ export default defineComponent({
     return {
       personCircleOutline,
       cogOutline,
-      peopleCircleOutline
+      peopleCircleOutline,
+      cameraOutline
     }
   }
 });
