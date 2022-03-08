@@ -5,7 +5,7 @@ import CameraPage from "@/views/CameraPage";
 const routes = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/intro'
   },
   {
     path: '/tabs/',
@@ -32,7 +32,20 @@ const routes = [
 
   {
     path: '/camera',
-    component: CameraPage  }
+    component: CameraPage
+  },
+  {
+    path: '/intro',
+    component: () => import('@/views/IntroPage')
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/forms/SignInForm')
+  },
+  {
+    path: '/register',
+    component: () => import('@/views/forms/RegisterForm')
+  }
 ]
 
 const router = createRouter({

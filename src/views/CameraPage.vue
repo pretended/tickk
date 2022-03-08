@@ -45,6 +45,7 @@ export default {
     }
   },
   async mounted() {
+
    await this.openCamera()
   },
 
@@ -62,7 +63,6 @@ export default {
     },
     async stopCamera() {
     await  this.$router.back()
-      this.cameraActive = false;
     },
     async flipCamera() {
       await CameraPreview.flip()
