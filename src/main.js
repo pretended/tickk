@@ -25,6 +25,16 @@ import './theme/variables.css';
 // Above the createApp() line
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { store } from "./store/index";
+import { configure } from 'vee-validate';
+
+// Default values
+configure({
+  validateOnBlur: false, // controls if `blur` events should trigger validation with `handleChange` handler
+  validateOnChange: false, // controls if `change` events should trigger validation with `handleChange` handler
+  validateOnInput: false, // controls if `input` events should trigger validation with `handleChange` handler
+  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
+});
+
 // Call the element loader after the platform has been bootstrapped
 defineCustomElements(window);
 const app = createApp(App)

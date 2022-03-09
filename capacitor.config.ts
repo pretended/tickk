@@ -3,7 +3,7 @@ const config = {
   appId: 'io.ionic.starter',
   appName: 'tickk',
   webDir: 'dist',
-  bundledWebRuntime: false
+  bundledWebRuntime: false,
 };
 
 export default config;

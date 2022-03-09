@@ -1,33 +1,18 @@
 import { createStore } from "vuex";
-
-import { auth } from "../firebase/index";
-import router from "@/router";
-
+import createPersistedState from "vuex-persistedstate";
 
 export const store = createStore({
-    state() {
-        return {
-            authModal: false,
-            where: 'new',
-        };
+    plugins: [createPersistedState()],
+    state: {
+        user : null
+    },
+    getters:{
+        getUser: state => {
+            return state.user;
+        }
     },
     actions: {
-        async signInWithEmailAndPassword  ({commit}, payload)  {
-            let ret = {
-                success: true,
-                errorMsg: '',
-                signMethod: payload.signMethod
-            }
-            try {
-               let res = await auth.signInWithEmailAndPassword(payload.email, payload.password);
-                console.log(res);
-                commit;
-                await router.push("/tabs/tab1");
-            } catch (error) {
-                ret.success = false;
-                ret.errorMsg = error.message;
-            }
-        }
+
     },
     mutations: {
         updateIntro(state, value) {
@@ -35,6 +20,9 @@ export const store = createStore({
         },
         updateAuthModal(state, value) {
             state.authModal = value
-        }
+        },
+        setUser(state, user){
+            state.user = user;
+        },
     }
 });

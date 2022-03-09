@@ -1,7 +1,7 @@
 <template>
   <ion-page style="max-width:1200px">
     <ion-header translucent>
-      <ion-toolbar>
+      <ion-toolbar >
         <ion-buttons slot="start">
           <ion-back-button text="" ></ion-back-button>
         </ion-buttons>
@@ -12,14 +12,21 @@
       <v-form style="margin-top: 5vh" class="ion-padding-horizontal ion-margin-horizontal" @submit="onSubmit" :validation-schema="validation_schema">
         <ion-item class="ion-no-padding" >
           <ion-label >Email</ion-label>
-          <v-field name="email" v-slot="{field}" :rules="isRequired">
+          <v-field  name="email" v-slot="{field}">
           <ion-input name="email" v-bind="field" type="email"  inputmode="email" ></ion-input>
           </v-field>
         </ion-item>
         <v-error-message name="email" class="error"/>
         <ion-item class="ion-no-padding" >
+          <ion-label>Nombre de perfil</ion-label>
+          <v-field name="username" v-slot="{field}">
+            <ion-input name="username" v-bind="field" type="text"  ></ion-input>
+          </v-field>
+        </ion-item>
+        <v-error-message name="username" class="error"/>
+        <ion-item class="ion-no-padding" >
           <ion-label >Password</ion-label>
-          <v-field name="password" v-slot="{field}" :rules="isRequired">
+          <v-field name="password" v-slot="{field}" >
           <ion-input name="password"  v-bind="field"  type="password" ></ion-input>
           </v-field>
         </ion-item>
@@ -29,7 +36,7 @@
             <a class="forgot-password">Forgot password?</a>
           </div>
 
-        <ion-button expand="block" mode="ios" color="primary" class="btn-text ion-margin-top" type="submit">Registrarse</ion-button>
+        <ion-button expand="block" mode="ios"  color="primary" class="btn-text ion-margin-top" type="submit">Registrarse</ion-button>
 
         <!--        TODO BIRTHDAY COMPONENT -->
 <!--        <ion-item class="ion-padding-horizontal" id="open-datetime-modal">-->
@@ -39,55 +46,78 @@
 <!--        </ion-item>-->
 
       </v-form>
+
     </ion-content>
   </ion-page>
 </template>
 
 <script>
-import {IonBackButton, IonButtons, IonContent, IonHeader, IonPage, IonToolbar, IonTitle, IonInput, IonItem, IonLabel, IonButton} from "@ionic/vue";
+import {
+  IonBackButton,
+  IonButtons,
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonToolbar,
+  IonTitle,
+  IonInput,
+  IonItem,
+  IonLabel,
+  IonButton,
+  IonSpinner,
+  toastController,
+} from "@ionic/vue";
 import * as VeeValidate from 'vee-validate';
 import * as yup from "yup";
-import { auth } from "../../firebase/index";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import {useRouter, } from 'vue-router'
+import {newUserWithEmailAndPassword} from "@/firebase/logic";
+import {isUsernameAvailable} from "@/firebase/users";
+
 export default {
   name: "RegisterForm",
   // eslint-disable-next-line vue/no-unused-components
-  components: {IonPage, IonToolbar, IonButtons, IonBackButton, IonHeader, IonContent,
+  components: {IonPage, IonToolbar, IonButtons, IonBackButton, IonHeader, IonContent, IonSpinner,
     IonTitle, IonInput, IonItem, IonLabel,IonButton,
     VField: VeeValidate.Field, VForm: VeeValidate.Form, VErrorMessage: VeeValidate.ErrorMessage},
-  data: () => {
-    const schema = yup.object({
-      email: yup.string().required('Necesito tu email').email('Email no valido'),
-      password: yup.string().required('Necesito tu contraseña').min(7, 'Contraseña demasiado corta - Min 7 caracteres').matches('(?=.*[A-Z])', 'Una letra en mayuscula'),
-      //TODO CHECK
-      // passwordConfirmation: Yup.string()
-      //     .oneOf([Yup.ref('password'), null], 'Passwords must match')
-    });
-    return {
-      validation_schema: schema
-    }
-  },
+  data: () => ({
+    isChecking: false,
+  }),
   setup() {
     const router = useRouter()
+    const validation_schema =
+       yup.object({
+        email: yup.string().email('Email no valido').required('Introduce tu email'),
+        username: yup.string().min(1, "Minimo 1 caracter")
+            .max(15, "Maximo 15 characters").required('Introduce nombre de perfil'),
+        password: yup.string().min(7, 'Contraseña demasiado corta - Min 7 caracteres').matches('(?=.*[A-Z])', 'Una letra en mayuscula').required('Introduce tu contraseña'),
+      })
+    const openToast = async (toastMsg) => {
+      const toast = await toastController
+          .create({
+            message: toastMsg,
+            duration: 4000
+          })
+      return toast.present();
+    }
     const onSubmit = async (data) => {
       try {
-        const res = await createUserWithEmailAndPassword(auth, data.email, data.password);
-        console.log(res)
-        await router.push('/tabs/tab1' )
+        if (await isUsernameAvailable(data.username)) {
+          await newUserWithEmailAndPassword(data.email, data.password, {
+            username: data.username
+          })
+          await router.push('/app/settings' )
+        } else {
+          await openToast('Username is not available!')
+        }
       }  catch (e) {
         console.log(e)
       }
     }
-    const isRequired = (value) => {
-      if (!value) return "This field is required."
-      return true;
-    }
     return {
+      validation_schema,
       onSubmit,
-      isRequired
     }
-  }
+  },
 }
 </script>
 

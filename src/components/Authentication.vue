@@ -35,9 +35,10 @@
 </template>
 
 <script>
-import { IonContent, IonSegment, IonSegmentButton, IonLabel, IonButton, IonIcon,} from '@ionic/vue';
+import {getPlatforms, IonButton, IonContent, IonIcon, IonLabel, IonSegment, IonSegmentButton,} from '@ionic/vue';
 import {mailOutline} from "ionicons/icons";
-import { getPlatforms } from '@ionic/vue';
+import {newUserWithGoogleSignIn} from "@/firebase/logic";
+
 export default {
   name: "AuthenticationPage",
   components: {IonContent,  IonSegment, IonSegmentButton, IonLabel, IonButton, IonIcon, },
@@ -53,30 +54,27 @@ export default {
       try {
 
         if (this.isReturning) {
-          switch (mode) {
-            case "apple" :
-              // todo contine with apple
-                  break;
-            case "google":
-              // todo google auth
-              break;
-            case "email":
-              await this.$router.push('/login')
+          if (mode === 'apple') {
+            // todo contine with apple
+          } else if (mode === 'google') {
+            await newUserWithGoogleSignIn()
+            await this.$router.push('/app/settings')
+          } else if (mode === 'email') {
+            await this.$router.push('/login')
           }
         } else {
-          switch (mode) {
-            case "apple" :
-              // todo contine with apple
-              break;
-            case "google":
-              // todo continue with google
-              break;
-            case "email":
-              await this.$router.push('/register')
+          if (mode === 'apple') {
+            // todo contine with apple
+          } else if (mode === 'google') {
+            await newUserWithGoogleSignIn()
+            await this.$router.push('/app/settings')
+          } else if (mode === 'email') {
+            await this.$router.push('/register')
           }
         }
       } catch (e) {
         console.error(e);
+
       } finally {
         this.$store.commit('updateAuthModal', false)
       }

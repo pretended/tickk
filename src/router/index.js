@@ -1,42 +1,56 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import TabsPage from '../views/TabsPage.vue'
 import CameraPage from "@/views/CameraPage";
-
+import {store} from '@/store'
 const routes = [
   {
     path: '/',
-    redirect: '/intro'
+    component: () => import('@/views/IntroPage')
   },
   {
-    path: '/tabs/',
+    path: '/app/',
     component: TabsPage,
+  meta: {
+  requiresAuth: true
+},
     children: [
       {
         path: '',
-        redirect: '/tabs/tab1'
+        redirect: '/app/friends',
+        meta: {
+          requiresAuth: true
+        }
       },
       {
-        path: 'tab1',
-        component: () => import('@/views/FriendsPage.vue')
+        path: 'friends',
+        component: () => import('@/views/FriendsPage.vue'),
+        meta: {
+          requiresAuth: true
+        }
       },
       {
-        path: 'tab2',
-        component: () => import('@/views/GroupsPage.vue')
+        path: 'groups',
+        component: () => import('@/views/GroupsPage.vue'),
+        meta: {
+          requiresAuth: true
+        }
       },
       {
-        path: 'tab3',
-        component: () => import('@/views/SettingsPage.vue')
+        path: 'settings',
+        component: () => import('@/views/SettingsPage.vue'),
+        meta: {
+          requiresAuth: true
+        }
       }
     ]
   },
 
   {
     path: '/camera',
-    component: CameraPage
-  },
-  {
-    path: '/intro',
-    component: () => import('@/views/IntroPage')
+    component: CameraPage,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/login',
@@ -52,5 +66,13 @@ const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
-
+router.beforeEach(async (to, from, next)=>{
+  let currentUser = store.getters.getUser;
+  let requriesAuth = to.matched.some(record => record.meta.requiresAuth);
+  if(requriesAuth && !currentUser){
+    next('/')
+  }else{
+    next()
+  }
+})
 export default router
