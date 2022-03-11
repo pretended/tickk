@@ -65,7 +65,6 @@ import {
   IonItem,
   IonLabel,
   IonButton,
-  IonSpinner,
   toastController,
 } from "@ionic/vue";
 import * as VeeValidate from 'vee-validate';
@@ -76,8 +75,7 @@ import {isUsernameAvailable} from "@/firebase/users";
 
 export default {
   name: "RegisterForm",
-  // eslint-disable-next-line vue/no-unused-components
-  components: {IonPage, IonToolbar, IonButtons, IonBackButton, IonHeader, IonContent, IonSpinner,
+  components: {IonPage, IonToolbar, IonButtons, IonBackButton, IonHeader, IonContent,
     IonTitle, IonInput, IonItem, IonLabel,IonButton,
     VField: VeeValidate.Field, VForm: VeeValidate.Form, VErrorMessage: VeeValidate.ErrorMessage},
   data: () => ({

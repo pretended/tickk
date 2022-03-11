@@ -12,9 +12,12 @@
     </ion-toolbar>
   </ion-header>
   <ion-content fullscreen class="ion-padding">
-      <UserAvatar style="margin-left: 25px;" :use-edit="true" @click="selectImage">
+    <div @click="imagePickerHandler">
+      <UserAvatar style="margin-left: 25px;" :use-edit="true" >
 
       </UserAvatar>
+    </div>
+
   <div class="ion-text-center">
     <div class="name ion-padding-top" >{{ user.displayName }}</div>
     <div class="username">@{{ user.username }}</div>
@@ -32,13 +35,16 @@ import {ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 import {useStore} from "vuex";
 import {Filesystem} from '@capacitor/filesystem';
 import {writeDB} from "@/firebase/logic";
-
+import {ImagePicker} from '@awesome-cordova-plugins/image-picker';
 export default {
   name: "EditProfileForm",
   components: {UserAvatar, IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonContent,},
   setup() {
     const store = useStore()
-
+    const imagePickerHandler = async () => {
+      let image = await ImagePicker.getPictures({ maximumImagesCount: 1, title: 'test'})
+      console.log(image)
+    }
     const selectImage = async () => {
 
       const user = store.getters.getUser;
@@ -71,7 +77,8 @@ export default {
 
     }
     return {
-      selectImage
+      selectImage,
+      imagePickerHandler
     }
   },
   computed: {
