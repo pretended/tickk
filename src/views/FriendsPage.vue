@@ -15,21 +15,21 @@
           <ion-title size="large">Friends</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-card v-if="friendRequestRef" color="light" style="box-shadow: none !important; display: flex; flex-direction: row; justify-content: space-between" class="ion-padding "  >
-<div style="display: flex; flex-direction: row;">
-  <ion-avatar>
+      <ion-card v-if="friendRequestRef" color="light" style="box-shadow: none !important; display: flex; flex-direction: row; justify-content: space-between" class="ion-padding"  >
+<div style="display: flex; flex-direction: row; padding-top: 5px;">
+  <ion-avatar class="ion-margin-end" style="min-width: 64px !important;" >
     <ion-img :src="require('../assets/pnglogo.png')"></ion-img>
   </ion-avatar>
-  <div class="ion-margin-horizontal">
-    <ion-card-header class="ion-no-padding header_notification_friendrequest">
-      Tienes peticiones de amistad!
-    </ion-card-header>
+    <div>
+      <ion-card-header class="ion-no-padding header_notification_friendrequest">
+        Tienes peticiones de amistad! no de momento
+      </ion-card-header>
 
-    <ion-card-subheader>
-      <ion-text>anetxu + 2 more</ion-text>
-    </ion-card-subheader>
+      <ion-card-subtitle>
+        <ion-text>aaaa + 2 mas</ion-text>
+      </ion-card-subtitle>
+    </div>
 
-  </div>
 </div>
         <ion-card-subtitle style="display: flex; align-items: center;">
           <ion-icon size="small" :icon="chevronForwardOutline">
@@ -87,7 +87,7 @@
 
 <script>
 import {defineComponent, onMounted, ref} from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonRefresher, IonRefresherContent, IonButton, IonButtons, IonList, IonLabel, IonModal,IonAvatar, IonImg, IonCard, IonCardHeader, IonCardSubtitle, IonIcon } from '@ionic/vue';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonRefresher, IonText, IonRefresherContent, IonButton, IonButtons, IonList, IonLabel, IonModal,IonAvatar, IonImg, IonCard, IonCardHeader, IonCardSubtitle, IonIcon } from '@ionic/vue';
 import {chevronDownCircleOutline, chevronForwardOutline} from "ionicons/icons";
 import {useStore} from "vuex";
 import {getFromDB} from "@/firebase/logic";
@@ -97,12 +97,12 @@ export default  defineComponent({
   name: 'Tab1Page',
   components: {
     AddFriends,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonRefresher, IonRefresherContent, IonButton, IonButtons, IonList, IonLabel, IonModal,IonAvatar, IonImg, IonCard, IonCardHeader, IonCardSubtitle, IonIcon  },
+    IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonRefresher, IonRefresherContent,IonText, IonButton, IonButtons, IonList, IonLabel, IonModal,IonAvatar, IonImg, IonCard, IonCardHeader, IonCardSubtitle, IonIcon  },
 
   setup() {
     const store = useStore()
     const addFriendsModalRef = ref(false);
-    const friendRequestRef = ref(false);
+    const friendRequestRef = ref(true);
     const setOpenModal = (state) => addFriendsModalRef.value = state;
     const getFriends = async () => await getFromDB('friends', store.state.user.uid)
     const friends = ref([])

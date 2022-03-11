@@ -19,7 +19,6 @@ export async function isGoogleUserRegistered(uid) {
 export async function querySearchForUsernameOrDisplayName(text) {
     console.log(text)
     if (text) {
-        text = text.toLowerCase().trim()
         const usersRef = collection(db, "users");
         const usernameQuery = query(usersRef, orderBy("username"), startAt(text),endAt(text + '~') )
         const nameQuery = query(usersRef, orderBy("displayName"), startAt(text),endAt(text + '~') )

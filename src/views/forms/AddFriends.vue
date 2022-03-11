@@ -2,7 +2,7 @@
 <ion-page>
   <slot name="header"> </slot>
   <ion-content>
-    <ion-searchbar   placeholder="Search Some Values" animated @input="search($event.target.value)" >
+    <ion-searchbar   placeholder="Buscar" animated @input="search($event.target.value)" >
 
     </ion-searchbar>
     <ion-item-divider>Personas en tickk</ion-item-divider>
@@ -26,12 +26,12 @@
 <script>
 import { ref} from "vue";
 import {querySearchForUsernameOrDisplayName} from "@/firebase/users";
-import { IonPage, IonContent,  IonList,IonAvatar, IonImg, } from '@ionic/vue';
+import { IonPage, IonContent,  IonList,IonAvatar, IonImg, IonSearchbar, IonItemDivider, IonItem} from '@ionic/vue';
 
 export default {
   name: "AddFriends",
   components: {
-   IonContent, IonPage, IonList, IonAvatar, IonImg, },
+   IonContent, IonPage, IonItem, IonList, IonAvatar, IonImg, IonSearchbar, IonItemDivider},
   setup() {
     const friendsAdded = ref([])
     let searchInput = ref('')
