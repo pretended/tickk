@@ -1,4 +1,4 @@
-import {collection,  doc,getDoc,} from 'firebase/firestore'
+import {collection, doc, getDoc,} from 'firebase/firestore'
 import {db} from "@/firebase/index";
 
 export async function isUsernameAvailable(username) {
@@ -8,4 +8,11 @@ export async function isUsernameAvailable(username) {
         return !exists
     }
     return false;
+}
+export async function isGoogleUserRegistered(uid) {
+    if (uid) {
+        return (await getDoc(doc(collection(db, "users"), uid))).exists()
+    } else {
+        return false;
+    }
 }

@@ -1,5 +1,5 @@
 <template>
-  <ion-page style="max-width:1200px">
+  <ion-page >
     <ion-header translucent>
       <ion-toolbar >
         <ion-buttons slot="start">
@@ -18,32 +18,33 @@
         </ion-item>
         <v-error-message name="email" class="error"/>
         <ion-item class="ion-no-padding" >
-          <ion-label>Nombre de perfil</ion-label>
+          <ion-label >Password</ion-label>
+          <v-field name="password" v-slot="{field}" >
+            <ion-input name="password"  v-bind="field"  type="password" ></ion-input>
+          </v-field>
+        </ion-item>
+        <v-error-message name="password" class="error"/>
+        <ion-item class="ion-no-padding" >
+          <ion-label>Usuario</ion-label>
           <v-field name="username" v-slot="{field}">
             <ion-input name="username" v-bind="field" type="text"  ></ion-input>
           </v-field>
         </ion-item>
         <v-error-message name="username" class="error"/>
         <ion-item class="ion-no-padding" >
-          <ion-label >Password</ion-label>
-          <v-field name="password" v-slot="{field}" >
-          <ion-input name="password"  v-bind="field"  type="password" ></ion-input>
+          <ion-label>Nombre Completo</ion-label>
+          <v-field name="displayName" v-slot="{field}">
+            <ion-input name="displayName" v-bind="field" type="text"  ></ion-input>
           </v-field>
         </ion-item>
-        <v-error-message name="password" class="error"/>
+        <v-error-message name="displayName" class="error"/>
+
 
           <div class="ion-margin-top">
             <a class="forgot-password">Forgot password?</a>
           </div>
 
         <ion-button expand="block" mode="ios"  color="primary" class="btn-text ion-margin-top" type="submit">Registrarse</ion-button>
-
-        <!--        TODO BIRTHDAY COMPONENT -->
-<!--        <ion-item class="ion-padding-horizontal" id="open-datetime-modal">-->
-<!--          <ion-icon :icon="calendarOutline" slot="start" color="primary"></ion-icon>-->
-<!--          <ion-label >Birthday</ion-label>-->
-<!--          <ion-text slot="end">{{formattedStringDate}}</ion-text>-->
-<!--        </ion-item>-->
 
       </v-form>
 
@@ -86,6 +87,7 @@ export default {
     const router = useRouter()
     const validation_schema =
        yup.object({
+         displayName: yup.string().required('Introduce tu nombre').max(15, "Maximo 15 characters"),
         email: yup.string().email('Email no valido').required('Introduce tu email'),
         username: yup.string().min(1, "Minimo 1 caracter")
             .max(15, "Maximo 15 characters").required('Introduce nombre de perfil'),
@@ -103,7 +105,8 @@ export default {
       try {
         if (await isUsernameAvailable(data.username)) {
           await newUserWithEmailAndPassword(data.email, data.password, {
-            username: data.username
+            username: data.username,
+            displayName: data.displayName
           })
           await router.push('/app/settings' )
         } else {

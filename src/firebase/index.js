@@ -3,6 +3,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getAnalytics } from "firebase/analytics";
+import { getStorage } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -17,20 +18,17 @@ const firebaseConfig = {
 };
 import { getFirestore } from 'firebase/firestore';
 import {store} from "@/store";
+import {getFromDB} from "@/firebase/logic";
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const analytics = getAnalytics(app)
 export const auth = getAuth(app);
-auth.onAuthStateChanged(function(user) {
+export const storage = getStorage(app);
+auth.onAuthStateChanged(async function(user) {
     if (user) {
-        store.commit('setUser', {
-            email: user.email,
-            emailVerified: user.emailVerified,
-            displayName: user.displayName,
-            uid: user.uid,
-            photoUrl: user.photoURL
-        })
+        let realUserData = await getFromDB('users', user.uid,);
+        store.commit('setUser', realUserData ? realUserData : user)
     } else {
         // No user is signed in.
     }

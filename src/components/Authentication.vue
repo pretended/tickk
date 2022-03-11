@@ -57,8 +57,9 @@ export default {
           if (mode === 'apple') {
             // todo contine with apple
           } else if (mode === 'google') {
-            await newUserWithGoogleSignIn()
-            await this.$router.push('/app/settings')
+            let isRegistered = await newUserWithGoogleSignIn()
+            console.log(isRegistered)
+            isRegistered ? await this.$router.push('/app/friends') : await this.$router.push('/register-username')
           } else if (mode === 'email') {
             await this.$router.push('/login')
           }
@@ -66,8 +67,8 @@ export default {
           if (mode === 'apple') {
             // todo contine with apple
           } else if (mode === 'google') {
-            await newUserWithGoogleSignIn()
-            await this.$router.push('/app/settings')
+            let isRegistered = await newUserWithGoogleSignIn()
+            isRegistered ? await this.$router.push('/app/friends') : await this.$router.push('/register-username')
           } else if (mode === 'email') {
             await this.$router.push('/register')
           }

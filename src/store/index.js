@@ -1,10 +1,11 @@
 import { createStore } from "vuex";
 import createPersistedState from "vuex-persistedstate";
+import {getCurrentUser} from "@/firebase/logic";
 
 export const store = createStore({
     plugins: [createPersistedState()],
     state: {
-        user : null
+        user : getCurrentUser() || null
     },
     getters:{
         getUser: state => {

@@ -41,7 +41,14 @@ const routes = [
         meta: {
           requiresAuth: true
         }
-      }
+      },
+      {
+        path: 'edit-account',
+        component: () => import('@/views/forms/EditProfileForm.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
     ]
   },
 
@@ -59,6 +66,10 @@ const routes = [
   {
     path: '/register',
     component: () => import('@/views/forms/RegisterForm')
+  },
+  {
+    path: '/register-username',
+    component: () => import('@/views/forms/RegisterUsername')
   }
 ]
 
@@ -71,7 +82,9 @@ router.beforeEach(async (to, from, next)=>{
   let requriesAuth = to.matched.some(record => record.meta.requiresAuth);
   if(requriesAuth && !currentUser){
     next('/')
-  }else{
+  }else if (!requriesAuth && currentUser) {
+    next('/app/friends')
+  } else {
     next()
   }
 })
