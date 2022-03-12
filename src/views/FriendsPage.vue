@@ -15,18 +15,19 @@
           <ion-title size="large">Friends</ion-title>
         </ion-toolbar>
       </ion-header>
-      <ion-card v-if="friendRequestRef" color="light" style="box-shadow: none !important; display: flex; flex-direction: row; justify-content: space-between" class="ion-padding"  >
+
+      <ion-card @click="openFriendRequestModal" v-if="friendRequests.length >  0" color="light" style="box-shadow: none !important; display: flex; flex-direction: row; justify-content: space-between" class="ion-padding"  >
 <div style="display: flex; flex-direction: row; padding-top: 5px;">
   <ion-avatar class="ion-margin-end" style="min-width: 64px !important; min-height: 64px !important;" >
     <ion-img :src="require('../assets/pnglogo.png')"></ion-img>
   </ion-avatar>
-    <div>
+    <div >
       <ion-card-header class="ion-no-padding header_notification_friendrequest">
-        Tienes peticiones de amistad! no de momento
+        Tienes peticiones de amistad!
       </ion-card-header>
 
       <ion-card-subtitle>
-        <ion-text>aaaa + 2 mas</ion-text>
+        <ion-text>{{friendRequests[0].displayName}}{{ friendRequests.length > 1 ? (' + ' + (friendRequests.length - 1) + ' more' ) : '' }}</ion-text>
       </ion-card-subtitle>
     </div>
 
@@ -87,12 +88,33 @@
 
 <script>
 import {defineComponent, onMounted, ref} from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonRefresher, IonText, IonRefresherContent, IonButton, IonButtons, IonList, IonLabel, IonModal,IonAvatar, IonImg, IonCard, IonCardHeader, IonCardSubtitle, IonIcon } from '@ionic/vue';
+import {
+  IonPage,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonRefresher,
+  IonText,
+  IonRefresherContent,
+  IonButton,
+  IonButtons,
+  IonList,
+  IonLabel,
+  IonModal,
+  IonAvatar,
+  IonImg,
+  IonCard,
+  IonCardHeader,
+  IonCardSubtitle,
+  IonIcon,
+  modalController
+} from '@ionic/vue';
 import {chevronDownCircleOutline, chevronForwardOutline} from "ionicons/icons";
 import {useStore} from "vuex";
-import {getFromDB} from "@/firebase/logic";
 import AddFriends from "@/views/forms/AddFriends";
-
+import {getFriendRequests, getFriendsFromUser} from "@/firebase/users";
+import FriendRequestPage from "@/views/FriendRequestPage";
 export default  defineComponent({
   name: 'Tab1Page',
   components: {
@@ -102,18 +124,37 @@ export default  defineComponent({
   setup() {
     const store = useStore()
     const addFriendsModalRef = ref(false);
-    const friendRequestRef = ref(true);
     const setOpenModal = (state) => addFriendsModalRef.value = state;
-    const getFriends = async () => await getFromDB('friends', store.state.user.uid)
+    const getFriends = async () => await getFriendsFromUser(store.state.user.uid)
+    const gFReq = async () => await getFriendRequests(store.state.user.uid)
     const friends = ref([])
+    const friendRequests = ref([]);
+    const syncInfo = async () => {
+      friendRequests.value = ( await gFReq()).requests;
+      friends.value = (await getFriends()).friends
+    }
     onMounted(async () => {
-       friends.value = (await getFriends()).friends
+    await syncInfo()
     })
     const doRefresh = async (event) => {
-      friends.value = (await getFriends(store.state.user.uid)).friends;
+      await syncInfo()
       event.target.complete();
     }
-    return { chevronDownCircleOutline, doRefresh, friends, user: store.state.user, addFriendsModalRef, setOpenModal, chevronForwardOutline, friendRequestRef }
+    const openFriendRequestModal = async () => {
+
+      const modal = await modalController
+          .create({
+        component: FriendRequestPage,
+        componentProps: {
+          title: 'Nuevos amigos',
+          friendRequests:  friendRequests.value,
+          modalId: 'friend-req-modal'
+        },
+          id: 'friend-req-modal'
+      })
+      return modal.present();
+    }
+    return { openFriendRequestModal, friendRequests, chevronDownCircleOutline, doRefresh, friends, user: store.state.user, addFriendsModalRef, setOpenModal, chevronForwardOutline }
   }
 });
 </script>

@@ -6,8 +6,8 @@
     </ion-searchbar>
     <ion-item-divider>Personas en tickk</ion-item-divider>
 
-    <ion-list v-if="friendsAdded.length > 0">
-      <ion-item class="ion-no-padding"  v-for="(user, index) in friendsAdded" :key="index">
+    <ion-list v-if="friendsToAdded.length > 0">
+      <ion-item class="ion-no-padding"  v-for="(user, index) in friendsToAdded" :key="index">
 
        <div style="display: flex; flex-direction: row">
          <ion-avatar class="ion-margin">
@@ -20,8 +20,8 @@
          </div>
        </div>
         <div slot="end">
-          <ion-button>
-            <ion-icon slot="start" :icon="addOutline"></ion-icon>
+          <ion-button @click="sendFriendRe(user)">
+            <ion-icon  slot="start" :icon="addOutline" ></ion-icon>
             Add</ion-button>
         </div>
       </ion-item>
@@ -33,23 +33,34 @@
 
 <script>
 import { ref} from "vue";
-import {querySearchForUsernameOrDisplayName} from "@/firebase/users";
+import {querySearchForUsernameOrDisplayName, sendFriendRequest} from "@/firebase/users";
 import { IonPage, IonContent,  IonList,IonAvatar, IonImg, IonSearchbar, IonItemDivider, IonItem, IonIcon, IonButton, } from '@ionic/vue';
 import {addOutline} from "ionicons/icons";
+import {useStore} from "vuex";
 export default {
   name: "AddFriends",
   components: {
    IonContent, IonPage, IonItem, IonList, IonAvatar, IonImg, IonSearchbar, IonItemDivider, IonIcon, IonButton,},
   setup() {
-    const friendsAdded = ref([])
+    const friendsToAdded = ref([])
     let searchInput = ref('')
+    const store = useStore();
+    const sendFriendRe = async (userInfo) => {
+      try {
+        const user = store.state.user;
+        await sendFriendRequest(user, userInfo.uid)
+      } catch (e) {
+        console.warn(e)
+      }
+    }
     const search = async (text) => {
       // delete yourself from list and change add for sent or a cross to delete a friend from my list
-      friendsAdded.value = await querySearchForUsernameOrDisplayName(text)
+      friendsToAdded.value = await querySearchForUsernameOrDisplayName(text)
     }
     return {
+      sendFriendRe,
       addOutline,
-      friendsAdded,
+      friendsToAdded,
       search,
       searchInput
     }

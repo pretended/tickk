@@ -1,5 +1,5 @@
 import {auth, db, storage} from "@/firebase/index";
-import {doc, getDoc, setDoc,} from "firebase/firestore";
+import {doc, getDoc, setDoc} from "firebase/firestore";
 import {
     createUserWithEmailAndPassword,
     getAdditionalUserInfo,

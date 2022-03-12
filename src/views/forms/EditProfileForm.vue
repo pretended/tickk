@@ -7,7 +7,7 @@
       </ion-buttons>
       <ion-title>Edit Profile</ion-title>
       <ion-buttons slot="end">
-        Save
+          <ion-button  style="font-weight: 600"> Save </ion-button>
       </ion-buttons>
     </ion-toolbar>
   </ion-header>

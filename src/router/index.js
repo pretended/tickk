@@ -73,6 +73,13 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path: '/friend-request',
+    component: () => import('@/views/FriendRequestPage'),
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 
