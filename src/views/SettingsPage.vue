@@ -57,7 +57,7 @@ import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent,IonCol, IonGrid,  
 import {useStore} from "vuex";
 import {useRouter} from "vue-router";
 import {computed} from "vue";
-import {GoogleSignOut} from "@/firebase/logic";
+import { signOutFromAccount} from "@/firebase/logic";
 import {createOutline} from "ionicons/icons";
 import UserAvatar from "@/components/users/UserAvatar";
 export default defineComponent({
@@ -68,9 +68,8 @@ export default defineComponent({
     const store = useStore()
     const router = useRouter()
     const signOut = async () => {
-      const user = store.state.user;
+      await signOutFromAccount()
       store.commit('setUser', null)
-      user.googleLogin ? await GoogleSignOut() : ''
       await router.push('/')
     }
     return {

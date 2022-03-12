@@ -1,13 +1,13 @@
 <template>
   <div style="display: flex; justify-content: center">
     <div>
-      <img  v-if="!!photoUrl" class="img_thumbnail" :src="photoUrl + '&' + + new Date().getTime()" />
+      <ion-img  v-if="!!photoUrl" class="img_thumbnail" :src="photoUrl + '&' + + new Date().getTime()" />
 
       <ion-img v-else class="img_thumbnail"  :src="require('../../assets/default_user.png')" ></ion-img>
     </div>
     <div class="circle"  v-if="useEdit">
-      <div class="edit_th" style="display: flex; justify-content: center; padding-top: 5px">
-        <ion-icon color="light" :icon="pencil"></ion-icon>
+      <div class="edit_th" style="display: flex; justify-content: center; padding-top: 7px">
+        <ion-icon color="light" :icon="camera"></ion-icon>
       </div>
     </div>
   </div>
@@ -15,7 +15,7 @@
 
 <script>
 import {IonImg, IonIcon} from "@ionic/vue";
-import {pencil} from "ionicons/icons";
+import {camera} from "ionicons/icons";
 
 export default {
   name: "UserAvatar",
@@ -33,7 +33,7 @@ export default {
   },
   setup() {
     return {
-      pencil
+      camera
     }
   },
 
@@ -49,7 +49,7 @@ export default {
   width: 30px;
   right: 25px;
   top: 65px;
-  background-color: #4e7fff;
+  background-color: mediumblue;
   border-radius: 50%;
 }
 .img_thumbnail {

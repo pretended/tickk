@@ -9,11 +9,13 @@ export async function isUsernameAvailable(username) {
     }
     return false;
 }
-export async function isGoogleUserRegistered(uid) {
-    if (uid) {
-        return (await getDoc(doc(collection(db, "users"), uid))).exists()
-    } else {
+export async function hasUsername(uid) {
+   let res= (await getDoc(doc(collection(db, "users"), uid))).data()
+    if (res === undefined) {
         return false;
+    } else {
+        const username = res.username;
+        return !!username
     }
 }
 export async function querySearchForUsernameOrDisplayName(text) {

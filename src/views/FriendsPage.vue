@@ -17,7 +17,7 @@
       </ion-header>
       <ion-card v-if="friendRequestRef" color="light" style="box-shadow: none !important; display: flex; flex-direction: row; justify-content: space-between" class="ion-padding"  >
 <div style="display: flex; flex-direction: row; padding-top: 5px;">
-  <ion-avatar class="ion-margin-end" style="min-width: 64px !important;" >
+  <ion-avatar class="ion-margin-end" style="min-width: 64px !important; min-height: 64px !important;" >
     <ion-img :src="require('../assets/pnglogo.png')"></ion-img>
   </ion-avatar>
     <div>

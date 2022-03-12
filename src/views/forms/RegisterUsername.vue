@@ -58,7 +58,7 @@ export default {
     const validation_schema =
         yup.object({
           username: yup.string().min(1, "Minimo 1 caracter")
-              .max(15, "Maximo 15 caracteres").required('Introduce nombre de perfil').test('username', 'Usuario no disponible', async (username) => await isUsernameAvailable(username)),
+              .max(15, "Maximo 15 caracteres").matches('^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$', 'Nombre de usuario no disponible').required('Introduce nombre de perfil').test('username', 'Usuario no disponible', async (username) => await isUsernameAvailable(username)),
         })
     const onSubmit = async (data) => {
       console.log(data)

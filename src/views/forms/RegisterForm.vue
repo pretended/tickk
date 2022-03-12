@@ -88,7 +88,7 @@ export default {
          displayName: yup.string().required('Introduce tu nombre').max(15, "Maximo 15 characters"),
         email: yup.string().email('Email no valido').required('Introduce tu email'),
         username: yup.string().min(1, "Minimo 1 caracter")
-            .max(15, "Maximo 15 characters").required('Introduce nombre de perfil'),
+            .max(15, "Maximo 15 characters").matches('^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$', 'Nombre de usuario no disponible').required('Introduce nombre de perfil'),
         password: yup.string().min(7, 'Contraseña demasiado corta - Min 7 caracteres').matches('(?=.*[A-Z])', 'Una letra en mayuscula').required('Introduce tu contraseña'),
       })
     const openToast = async (toastMsg) => {

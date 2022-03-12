@@ -69,7 +69,10 @@ const routes = [
   },
   {
     path: '/register-username',
-    component: () => import('@/views/forms/RegisterUsername')
+    component: () => import('@/views/forms/RegisterUsername'),
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 
