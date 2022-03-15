@@ -106,7 +106,7 @@ export default {
             username: data.username,
             displayName: data.displayName
           })
-          await router.push('/app/settings' )
+          await router.push('/app/friends' )
         } else {
           await openToast('Username is not available!')
         }

@@ -1,5 +1,5 @@
 import {auth, db, storage} from "@/firebase/index";
-import {doc, getDoc, setDoc} from "firebase/firestore";
+import {doc, getDoc, setDoc, } from "firebase/firestore";
 import {
     createUserWithEmailAndPassword,
     getAdditionalUserInfo,
@@ -15,15 +15,20 @@ import {getDownloadURL, ref, uploadBytes} from "firebase/storage";
 export async function newUserWithEmailAndPassword(email, password, userInfo) {
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const username = userInfo.username.toLowerCase().trim();
-    await writeDB('users', res.user.uid,{
+    const user = {
         email: res.user.email,
         uid: res.user.uid,
-        username: username,
         emailVerified: false,
         photoUrl: null,
         googleLogin: false,
-        displayName: userInfo.displayName
-    } )
+        username: username,
+        displayName: userInfo.displayName,
+        displayName_lowerCase: userInfo.displayName.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, ""),
+        friends: [],
+        friendRequests: []
+    }
+    await writeDB('users', res.user.uid, user)
+    localStorage.setItem('user', JSON.stringify(user))
     await updateUsername(username, res.user.uid);
 }
 export async function signInWithEmailAndPwd(email, password) {
@@ -47,22 +52,37 @@ export async function newUserWithGoogleSignIn() {
     const auth = getAuth();
     const res = await signInWithPopup(auth, provider)
     const additionalInfo = getAdditionalUserInfo(res);
-
+    console.log(additionalInfo)
     if (additionalInfo.isNewUser) {
        const imageUrl = await getAndUploadImageUrl(res.user.photoURL, res.user.uid);
-        await writeDB('users', res.user.uid,{
-            email: res.user.email,
-            uid: res.user.uid,
-            photoUrl: imageUrl,
-            emailVerified: res.user.emailVerified,
-            googleLogin: true,
-            displayName: res.user.displayName
-        },  )
+       const user = {
+           email: res.user.email,
+           uid: res.user.uid,
+           photoUrl: imageUrl,
+           emailVerified: res.user.emailVerified,
+           googleLogin: true,
+           displayName: res.user.displayName,
+           displayName_lowerCase: res.user.displayName.toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g, ""),
+           friends: [],
+           friendRequests: []
+       }
+        await writeDB('users', res.user.uid, user  )
+        localStorage.setItem('user', JSON.stringify(user))
         return false;
     } else {
-        return await hasUsername(res.user.uid)
+        const userHasUsername = await hasUsername(res.user.uid)
+        if (localStorage.getItem('user') == 'undefined' || localStorage.getItem('user') == null) {
+            const auth = getAuth()
+            const currentUser = auth.currentUser;
+            if (currentUser) {
+                localStorage.setItem('user', JSON.stringify(currentUser))
+            } else {
+                localStorage.setItem('user', JSON.stringify(await getFromDB('users', res.user.uid)))
+            }
+
+        }
+        return userHasUsername
     }
-    // depends if it was already registered or not
 }
 export async function getFromDB(path, collection,) {
     const d  = doc(db, path, collection);
@@ -74,9 +94,7 @@ export async function writeDB(path, collection, data, options = {}, ret = false)
         return getFromDB(path, collection)
     }
 }
-export function getCurrentUser() {
-    return auth.currentUser;
-}
+
 export async function updateUsername(username, uid) {
     username = username.toLowerCase().trim()
     let usernamesObjectHandler = {}

@@ -12,7 +12,7 @@
     </ion-segment>
 
     <div>
-      <div >
+      <div class="ion-padding-top">
         <div class="header">
           {{ isReturning ? 'Sign In' : 'Sign up' }} for tickk
         </div>
@@ -75,9 +75,6 @@ export default {
         }
       } catch (e) {
         console.error(e);
-
-      } finally {
-        this.$store.commit('updateAuthModal', false)
       }
 
     }

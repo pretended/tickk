@@ -25,7 +25,6 @@
 
 <script>
 import TemplateModal from "@/components/TemplateModal";
-import {useStore} from "vuex";
 import {acceptFriendRequest} from "@/firebase/users";
 export default {
   name: "FriendRequestPage",
@@ -36,9 +35,9 @@ export default {
     modalId: String
   },
   setup() {
-    const store = useStore()
     const acceptFriendReq = async (user) => {
-      return await acceptFriendRequest(store.state.user, user)
+      const myUser = JSON.parse(localStorage.getItem('user'))
+      return await acceptFriendRequest(myUser, user)
     }
     return {acceptFriendReq}
   }

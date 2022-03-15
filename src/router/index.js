@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import TabsPage from '../views/TabsPage.vue'
 import CameraPage from "@/views/CameraPage";
-import {store} from '@/store'
 const routes = [
   {
     path: '/',
-    component: () => import('@/views/IntroPage')
+    component: () => import('@/views/IntroPage'),
+    meta: {
+      requiresAuth: false
+    }
   },
   {
     path: '/app/',
@@ -38,6 +40,13 @@ const routes = [
       {
         path: 'settings',
         component: () => import('@/views/SettingsPage.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'user/:username',
+        component: () => import('@/views/UserProfile.vue'),
         meta: {
           requiresAuth: true
         }
@@ -88,11 +97,14 @@ const router = createRouter({
   routes
 })
 router.beforeEach(async (to, from, next)=>{
-  let currentUser = store.getters.getUser;
-  let requriesAuth = to.matched.some(record => record.meta.requiresAuth);
-  if(requriesAuth && !currentUser){
+  let user = localStorage.getItem('user')
+  let isUserLogged = !user || user === 'undefined' || user === '' ? null : JSON.parse(user) ;
+  let requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  console.log(from, to)
+  if(requiresAuth && !isUserLogged && to.fullPath !== '/register-username'){
     next('/')
-  }else if (!requriesAuth && currentUser) {
+  }else if (!requiresAuth && isUserLogged) {
+    console.log('a')
     next('/app/friends')
   } else {
     next()

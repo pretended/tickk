@@ -46,7 +46,6 @@ import {isUsernameAvailable} from "@/firebase/users";
 import * as VeeValidate from "vee-validate";
 import { updateUsername, writeDB} from "@/firebase/logic";
 import {useRouter} from "vue-router";
-import {useStore} from "vuex";
 
 export default {
   name: "RegisterUsername",
@@ -54,18 +53,19 @@ export default {
     VField: VeeValidate.Field, VForm: VeeValidate.Form, VErrorMessage: VeeValidate.ErrorMessage},
   setup() {
     const router = useRouter()
-    const store = useStore()
     const validation_schema =
         yup.object({
           username: yup.string().min(1, "Minimo 1 caracter")
               .max(15, "Maximo 15 caracteres").matches('^(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$', 'Nombre de usuario no disponible').required('Introduce nombre de perfil').test('username', 'Usuario no disponible', async (username) => await isUsernameAvailable(username)),
         })
+    const localStorageUser = localStorage.getItem('user')
     const onSubmit = async (data) => {
-      console.log(data)
       try {
-          await updateUsername(data.username, store.state.user.uid, )
-          let user = await writeDB('users', store.state.user.uid, {username: data.username}, {merge: true}, true )
-          store.commit('setUser', user)
+          console.log(localStorageUser)
+          const userUId = JSON.parse(localStorageUser).uid
+          await updateUsername(data.username, userUId )
+          const user = await writeDB('users', userUId, {username: data.username}, {merge: true}, true )
+          localStorage.setItem('user', JSON.stringify(user))
           await router.push('/app/friends')
       }  catch (e) {
         console.log(e)
@@ -91,5 +91,8 @@ export default {
   color: #000000;
 
 
+}
+.error {
+  color: #ff7575;
 }
 </style>

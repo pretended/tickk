@@ -31,13 +31,8 @@
               </ion-col>
             </ion-row>
           <ion-row style="padding-top: 20px">
-            <div class="settings_title" >
-              My account
-            </div>
+            <ion-item-divider>Mi cuenta</ion-item-divider>
 
-          </ion-row>
-          <ion-row>
-            no hya nada :)
           </ion-row>
         </ion-grid>
         <div style=" width: 90%;">
@@ -53,28 +48,27 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent,IonCol, IonGrid,  IonRow,IonButton, IonIcon,  } from '@ionic/vue';
-import {useStore} from "vuex";
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent,IonCol, IonGrid,  IonRow,IonButton, IonIcon, IonItemDivider  } from '@ionic/vue';
+
 import {useRouter} from "vue-router";
-import {computed} from "vue";
 import { signOutFromAccount} from "@/firebase/logic";
 import {createOutline} from "ionicons/icons";
 import UserAvatar from "@/components/users/UserAvatar";
 export default defineComponent({
   name: 'SettingsPage',
-  components: {UserAvatar,  IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonCol, IonGrid, IonRow,IonButton, IonIcon, },
+  components: {UserAvatar,  IonHeader, IonToolbar, IonTitle, IonContent, IonPage, IonCol, IonGrid, IonRow,IonButton, IonIcon, IonItemDivider},
 
   setup() {
-    const store = useStore()
     const router = useRouter()
     const signOut = async () => {
-      await signOutFromAccount()
-      store.commit('setUser', null)
+      localStorage.setItem('user', '')
       await router.push('/')
+      await signOutFromAccount()
+
     }
     return {
       signOut,
-      user: computed(() => store.state.user),
+      user: JSON.parse(localStorage.getItem('user')),
       createOutline,
     }
   }

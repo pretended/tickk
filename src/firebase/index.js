@@ -17,8 +17,8 @@ const firebaseConfig = {
     measurementId: "G-JWQCY30K92"
 };
 import { getFirestore } from 'firebase/firestore';
-import {store} from "@/store";
 import {getFromDB} from "@/firebase/logic";
+
 
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
@@ -27,12 +27,20 @@ export const auth = getAuth(app);
 export const storage = getStorage(app);
 auth.onAuthStateChanged(async function(user) {
     if (user) {
-        let realUserData = await getFromDB('users', user.uid,);
-        store.commit('setUser', realUserData ? realUserData : user)
-    } else {
-        // No user is signed in.
+        const uid = user.uid
+        const userFromFirestore = await getFromDB('users', uid);
+        localStorage.setItem('user', JSON.stringify(userFromFirestore));
     }
 });
+
+import { doc, onSnapshot } from "firebase/firestore";
+
+if (localStorage.getItem('user') !== 'undefined' || localStorage.getItem('user') !== '' || localStorage.getItem('user') !== null || localStorage.getItem('user') !== undefined) {
+    const user = JSON.parse(localStorage.getItem('user'))
+    onSnapshot(doc(db, "users", user.uid), (userDoc) => {
+        localStorage.setItem('user', JSON.stringify(userDoc))
+    });
+}
 // Get a list of cities from your database
 // async function getCities(db) {
 //     const citiesCol = collection(db, 'cities');

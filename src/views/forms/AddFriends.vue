@@ -26,7 +26,6 @@
         </div>
       </ion-item>
     </ion-list>
-
   </ion-content>
 </ion-page>
 </template>
@@ -36,7 +35,7 @@ import { ref} from "vue";
 import {querySearchForUsernameOrDisplayName, sendFriendRequest} from "@/firebase/users";
 import { IonPage, IonContent,  IonList,IonAvatar, IonImg, IonSearchbar, IonItemDivider, IonItem, IonIcon, IonButton, } from '@ionic/vue';
 import {addOutline} from "ionicons/icons";
-import {useStore} from "vuex";
+
 export default {
   name: "AddFriends",
   components: {
@@ -44,11 +43,10 @@ export default {
   setup() {
     const friendsToAdded = ref([])
     let searchInput = ref('')
-    const store = useStore();
     const sendFriendRe = async (userInfo) => {
       try {
-        const user = store.state.user;
-        await sendFriendRequest(user, userInfo.uid)
+        const user = JSON.parse(localStorage.getItem('user'));
+        await sendFriendRequest(user.uid, userInfo.uid)
       } catch (e) {
         console.warn(e)
       }

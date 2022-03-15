@@ -24,7 +24,6 @@ import '@ionic/vue/css/display.css';
 import './theme/variables.css';
 // Above the createApp() line
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
-import { store } from "./store/index";
 import { configure } from 'vee-validate';
 
 // Default values
@@ -40,7 +39,6 @@ defineCustomElements(window);
 const app = createApp(App)
   .use(IonicVue)
   .use(router)
-    .use(store)
 
 router.isReady().then(() => {
   app.mount('#app');

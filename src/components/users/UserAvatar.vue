@@ -28,7 +28,7 @@ export default {
   },
   computed: {
     photoUrl() {
-      return this.$store.state.user.photoUrl
+      return JSON.parse(localStorage.getItem('user')).photoUrl
     }
   },
   setup() {

@@ -12,6 +12,11 @@
     </ion-toolbar>
   </ion-header>
   <ion-content fullscreen class="ion-padding">
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title>Edit Profile</ion-title>
+      </ion-toolbar>
+    </ion-header>
     <div @click="imagePickerHandler">
       <UserAvatar style="margin-left: 25px;" :use-edit="true" >
 
@@ -32,7 +37,6 @@ import UserAvatar from "@/components/users/UserAvatar";
 import {Camera,} from '@capacitor/camera';
 import {storage} from "@/firebase";
 import {ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import {useStore} from "vuex";
 import {Filesystem} from '@capacitor/filesystem';
 import {writeDB} from "@/firebase/logic";
 import {ImagePicker} from '@awesome-cordova-plugins/image-picker';
@@ -40,14 +44,14 @@ export default {
   name: "EditProfileForm",
   components: {UserAvatar, IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonContent,},
   setup() {
-    const store = useStore()
+
     const imagePickerHandler = async () => {
       let image = await ImagePicker.getPictures({ maximumImagesCount: 1, title: 'test'})
       console.log(image)
     }
     const selectImage = async () => {
 
-      const user = store.getters.getUser;
+      const user = JSON.parse(localStorage.getItem('user'));
       // const checkPermissions = await Camera.checkPermissions();
       // console.log(checkPermissions)
       const image = await Camera.pickImages({
@@ -69,23 +73,17 @@ export default {
         await uploadBytes(imgRef, blob, {  contentType: 'image/jpeg'});
         const url = await getDownloadURL(imgRef);
         await writeDB('users', user.uid, {photoUrl: url}, {merge: true} )
-        let newUserInfo = {...store.state.user};
-        newUserInfo.photoUrl = url;
-        store.commit('setUser', newUserInfo)
       }
 
 
     }
     return {
       selectImage,
-      imagePickerHandler
+      imagePickerHandler,
+      user: JSON.parse(localStorage.getItem('user'))
     }
   },
-  computed: {
-    user() {
-      return this.$store.state.user;
-    }
-  }
+
 }
 </script>
 

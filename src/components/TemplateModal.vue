@@ -1,15 +1,21 @@
 <template>
 <ion-page>
-  <ion-header>
+  <ion-header >
     <ion-toolbar>
       <ion-buttons slot="start">
         <ion-button  @click="dismissModal" style="font-weight: 600"> Close </ion-button>
       </ion-buttons>
 
       <ion-title >{{title}}</ion-title>
+      <slot name="header"></slot>
     </ion-toolbar>
   </ion-header>
-  <ion-content>
+  <ion-content :fullscreen="true">
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title>{{ title }}</ion-title>
+      </ion-toolbar>
+    </ion-header>
     <slot></slot>
   </ion-content>
 </ion-page>

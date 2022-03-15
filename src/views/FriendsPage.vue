@@ -16,7 +16,7 @@
         </ion-toolbar>
       </ion-header>
 
-      <ion-card @click="openFriendRequestModal" v-if="friendRequests.length >  0" color="light" style="box-shadow: none !important; display: flex; flex-direction: row; justify-content: space-between" class="ion-padding"  >
+      <ion-card @click="openFriendRequestModal" v-if="friendRequests && friendRequests.length >  0 " color="light" style="box-shadow: none !important; display: flex; flex-direction: row; justify-content: space-between" class="ion-padding"  >
 <div style="display: flex; flex-direction: row; padding-top: 5px;">
   <ion-avatar class="ion-margin-end" style="min-width: 64px !important; min-height: 64px !important;" >
     <ion-img :src="require('../assets/pnglogo.png')"></ion-img>
@@ -39,23 +39,9 @@
         </ion-card-subtitle>
       </ion-card>
       <ion-list>
-        <ion-card v-for="(friend, index) in friends" :key="index" style="display: flex; flex-direction: row; justify-content: space-between " class="ion-padding ion-margin-vertical">
-         <div style="display: flex; flex-direction: row; padding-top: 5px;">
-           <ion-avatar>
-             <ion-img :src="friend.photoUrl"></ion-img>
-           </ion-avatar>
-           <ion-card-header class="ion-no-padding ion-margin-horizontal" style="display: flex; flex-direction: column; padding-top: 5px">
-             <ion-label style="font-weight: bold">{{friend.displayName}}</ion-label>
-             <ion-label >@{{friend.username}}</ion-label>
-           </ion-card-header>
-         </div>
-          <ion-card-subtitle style="display: flex; align-items: center;">
-            <ion-icon size="small" :icon="chevronForwardOutline">
-
-            </ion-icon>
-          </ion-card-subtitle>
-        </ion-card>
-
+        <router-link :to="'/app/user/' + friend.username " v-for="(friend, index) in friends" :key="index" style="text-decoration: none">
+          <FriendCard  :friend="friend" ></FriendCard>
+        </router-link>
       </ion-list>
       <ion-refresher slot="fixed" @ionRefresh="doRefresh($event)">
         <ion-refresher-content></ion-refresher-content>
@@ -73,9 +59,7 @@
                 <ion-buttons slot="start">
                   <ion-button @click="setOpenModal(false)" style="font-weight: 600"> Close </ion-button>
                 </ion-buttons>
-                <ion-buttons slot="end">
-                  <ion-button @click="setOpenModal(false)" style="font-weight: 600"> Save </ion-button>
-                </ion-buttons>
+
                 <ion-title >Add Friends</ion-title>
               </ion-toolbar>
             </ion-header>
@@ -100,7 +84,6 @@ import {
   IonButton,
   IonButtons,
   IonList,
-  IonLabel,
   IonModal,
   IonAvatar,
   IonImg,
@@ -111,27 +94,37 @@ import {
   modalController
 } from '@ionic/vue';
 import {chevronDownCircleOutline, chevronForwardOutline} from "ionicons/icons";
-import {useStore} from "vuex";
 import AddFriends from "@/views/forms/AddFriends";
-import {getFriendRequests, getFriendsFromUser} from "@/firebase/users";
 import FriendRequestPage from "@/views/FriendRequestPage";
+import FriendCard from "@/components/FriendCard";
+import {getMultipleDocs} from "@/firebase/users";
+import {getFromDB} from "@/firebase/logic";
+
 export default  defineComponent({
   name: 'Tab1Page',
   components: {
+    FriendCard,
     AddFriends,
-    IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonRefresher, IonRefresherContent,IonText, IonButton, IonButtons, IonList, IonLabel, IonModal,IonAvatar, IonImg, IonCard, IonCardHeader, IonCardSubtitle, IonIcon  },
+    IonHeader, IonToolbar, IonTitle, IonContent, IonPage,  IonRefresher, IonRefresherContent,IonText,
+    IonButton, IonButtons, IonList,IonModal,IonAvatar, IonImg, IonCard, IonCardHeader, IonCardSubtitle, IonIcon,   },
 
   setup() {
-    const store = useStore()
     const addFriendsModalRef = ref(false);
     const setOpenModal = (state) => addFriendsModalRef.value = state;
-    const getFriends = async () => await getFriendsFromUser(store.state.user.uid)
-    const gFReq = async () => await getFriendRequests(store.state.user.uid)
+    const userUId = JSON.parse(localStorage.getItem('user')).uid;
+    let user = {};
     const friends = ref([])
     const friendRequests = ref([]);
     const syncInfo = async () => {
-      friendRequests.value = ( await gFReq()).requests;
-      friends.value = (await getFriends()).friends
+      user = await getFromDB('users', userUId);
+      let getReceivedFriendRequests = [];
+      user.friendRequests.forEach(request => {
+        if (request.type === 'received') {
+          getReceivedFriendRequests.push(request.uid);
+        }
+      })
+      friendRequests.value = getReceivedFriendRequests.length > 0 ?  await getMultipleDocs('users', 'uid', getReceivedFriendRequests) : [];
+      friends.value = await getMultipleDocs('users', 'uid', user.friends)
     }
     onMounted(async () => {
     await syncInfo()
@@ -141,7 +134,6 @@ export default  defineComponent({
       event.target.complete();
     }
     const openFriendRequestModal = async () => {
-
       const modal = await modalController
           .create({
         component: FriendRequestPage,
@@ -154,7 +146,7 @@ export default  defineComponent({
       })
       return modal.present();
     }
-    return { openFriendRequestModal, friendRequests, chevronDownCircleOutline, doRefresh, friends, user: store.state.user, addFriendsModalRef, setOpenModal, chevronForwardOutline }
+    return { openFriendRequestModal, friendRequests, chevronDownCircleOutline, doRefresh, user, friends, addFriendsModalRef, setOpenModal, chevronForwardOutline }
   }
 });
 </script>
